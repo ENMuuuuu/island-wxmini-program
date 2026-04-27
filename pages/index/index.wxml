@@ -1,0 +1,23 @@
+<view class="container">
+  <view class="header">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <text class="title">不荒岛</text>
+    <text class="slogan">聚沙成塔，在方寸之间看见时间的形状</text>
+  </view>
+
+  <view class="login-box">
+    <button class="btn-primary" bindtap="handleLogin">
+      <text class="btn-text">微信一键登岛</text>
+    </button>
+    
+    <view class="invite-section">
+      <text class="divider">—— 或 ——</text>
+      <input class="invite-input" placeholder="输入同伴的荒岛邀请码" placeholder-class="ph-color" bindinput="handleInput" />
+      <button class="btn-secondary" bindtap="handleJoin">共建海岛</button>
+    </view>
+  </view>
+
+  <view class="footer">
+    <text>HCI 课程项目原型 v1.0</text>
+  </view>
+</view>

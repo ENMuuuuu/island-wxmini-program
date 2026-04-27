@@ -1,0 +1,43 @@
+<view class="container">
+
+  <view class="island-area">
+    <view class="isometric-canvas">
+      <block wx:for="{{islandBlocks}}" wx:key="id">
+        <image class="block {{item.isNew ? 'falling-anim' : ''}} {{item.isActive ? '' : 'dimmed'}}" src="{{item.src}}" style="left: {{item.x}}rpx; top: {{item.y}}rpx; z-index: {{item.z}};" mode="aspectFit"></image>
+      </block>
+    </view>
+  </view>
+
+  <scroll-view class="habit-area" scroll-y="{{true}}">
+    <view class="section-title">
+      <text>今日待点亮</text>
+      <text class="subtitle">长按右侧方块注入能量</text>
+    </view>
+
+    <block wx:for="{{habits}}" wx:key="id">
+      <view class="habit-card {{item.completed ? 'card-completed' : ''}}">
+
+        <view class="material-icon">
+          <image src="{{item.icon}}" mode="aspectFit"></image>
+        </view>
+
+        <view class="habit-info">
+          <text class="habit-title">{{item.title}}</text>
+          <text class="habit-streak">🔥 已连续 {{item.streak}} 天</text>
+        </view>
+
+        <view class="action-node" wx:if="{{!item.completed}}" bindtouchstart="handleTouchStart" bindtouchend="handleTouchEnd" bindtouchcancel="handleTouchEnd" data-index="{{index}}">
+          <view class="node-outline"></view>
+          <view class="node-fill {{item.chargeProgress > 0 ? 'is-charging' : ''}}" style="height: {{item.chargeProgress + '%'}};"></view>
+        </view>
+
+        <view class="action-done" wx:if="{{item.completed}}">
+          <text class="done-icon">✓</text>
+        </view>
+      </view>
+    </block>
+
+    <view class="bottom-padding"></view>
+  </scroll-view>
+
+</view>
