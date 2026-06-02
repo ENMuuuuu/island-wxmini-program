@@ -22,6 +22,8 @@ class AppUser(TimestampMixin, Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     nickname: Mapped[str] = mapped_column(String(64))
     avatar_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
+    bio: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    birthday: Mapped[date | None] = mapped_column(Date, nullable=True)
 
     habits: Mapped[list["Habit"]] = relationship(back_populates="user")
 

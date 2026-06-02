@@ -27,6 +27,8 @@ class UserProfile(BaseModel):
     id: int
     nickname: str
     avatar_url: str | None = None
+    bio: str | None = None
+    birthday: date | None = None
     habit_count: int = 0
     total_checkin_count: int = 0
     current_streak_days: int = 0
@@ -248,3 +250,12 @@ class HomePageData(BaseModel):
 class ErrorResponse(BaseModel):
     model_config = ConfigDict(json_schema_extra={"example": {"detail": "Habit not found"}})
     detail: str
+
+
+class UpdateCheckinNoteRequest(BaseModel):
+    note: str = Field(min_length=1, max_length=500)
+
+
+class CheckinNoteResponse(BaseModel):
+    checkin_id: int
+    note: str

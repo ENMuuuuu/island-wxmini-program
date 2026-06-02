@@ -23,6 +23,7 @@ from app.models import (
 from app.schemas import (
     CheckinCreateRequest,
     CheckinItem,
+    CheckinNoteResponse,
     CheckinResult,
     DayRecord,
     GrowthStateResponse,
@@ -46,6 +47,7 @@ from app.schemas import (
     ThemeCard,
     ThemeDetail,
     TimelineItem,
+    UpdateCheckinNoteRequest,
     UserProfile,
 )
 
@@ -88,13 +90,21 @@ class DatabaseStore:
             id=user.id,
             nickname=user.nickname,
             avatar_url=user.avatar_url,
+            bio=user.bio,
+            birthday=user.birthday,
             habit_count=habit_count,
             total_checkin_count=total_checkin_count,
             current_streak_days=self._estimate_streak(db, user_id),
         )
 
     def update_user_profile(
-        self, db: Session, user_id: int, nickname: str | None, avatar_url: str | None
+        self,
+        db: Session,
+        user_id: int,
+        nickname: str | None,
+        avatar_url: str | None,
+        bio: str | None,
+        birthday: date | None,
     ) -> UserProfile:
         user = db.get(AppUser, user_id)
         if not user:
@@ -103,6 +113,10 @@ class DatabaseStore:
             user.nickname = nickname
         if avatar_url is not None:
             user.avatar_url = avatar_url
+        if bio is not None:
+            user.bio = bio
+        if birthday is not None:
+            user.birthday = birthday
         db.commit()
         return self.get_user_profile(db, user_id)
 
@@ -413,6 +427,20 @@ class DatabaseStore:
                 proof_media_id=payload.proof_media_id,
             ),
         )
+
+    def update_checkin_note(
+        self, db: Session, user_id: int, checkin_id: int, payload: UpdateCheckinNoteRequest
+    ) -> CheckinNoteResponse:
+        checkin = db.scalar(
+            select(HabitCheckin)
+            .join(Habit, Habit.id == HabitCheckin.habit_id)
+            .where(HabitCheckin.id == checkin_id, Habit.user_id == user_id)
+        )
+        if not checkin:
+            raise HTTPException(status_code=404, detail="Checkin not found")
+        checkin.note = payload.note
+        db.commit()
+        return CheckinNoteResponse(checkin_id=checkin.id, note=checkin.note)
 
     def get_growth_state(self, db: Session, user_id: int, habit_id: int) -> GrowthStateResponse:
         habit = self._get_habit_owned_by_user(db, user_id, habit_id)

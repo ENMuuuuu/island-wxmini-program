@@ -73,6 +73,8 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
       "id": 1,
       "nickname": "小王",
       "avatar_url": "https://example.com/avatar.png",
+      "bio": null,
+      "birthday": null,
       "habit_count": 0,
       "total_checkin_count": 0,
       "current_streak_days": 0
@@ -99,6 +101,8 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - `id` 用户 ID
 - `nickname` 昵称
 - `avatar_url` 头像地址
+- `bio` 个性签名
+- `birthday` 生日
 - `habit_count` 习惯数
 - `total_checkin_count` 总打卡数
 - `current_streak_days` 当前连续打卡天数
@@ -113,9 +117,13 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```json
 {
   "nickname": "新的昵称",
-  "avatar_url": "https://example.com/new-avatar.png"
+  "avatar_url": "https://example.com/new-avatar.png",
+  "bio": "坚持就是胜利",
+  "birthday": "1995-06-15"
 }
 ```
+
+`bio` 和 `birthday` 均为可选字段。`bio` 最多 200 字符，`birthday` 格式为 `YYYY-MM-DD`。
 
 ### 3.3 首页聚合
 
@@ -371,6 +379,38 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 }
 ```
 
+### 6.4 更新打卡心得
+
+- 方法：`PATCH`
+- 路径：`/api/v1/checkins/{checkin_id}/note`
+- 描述：为某次打卡记录添加或修改心得文字
+- 权限：该打卡记录必须属于当前登录用户，否则返回 404
+
+路径参数：
+
+- `checkin_id` 打卡记录 ID
+
+请求体：
+
+```json
+{
+  "note": "今天跑了5公里，感觉很棒！"
+}
+```
+
+响应示例：
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "data": {
+    "checkin_id": 1,
+    "note": "今天跑了5公里，感觉很棒！"
+  }
+}
+```
+
 ## 7. 成长展示模块
 
 ### 7.1 获取成长状态
@@ -494,5 +534,3 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   }
 }
 ```
-
-##

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import date
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
@@ -12,6 +13,7 @@ from app.schemas import (
     APIResponse,
     CheckinCreateRequest,
     CheckinItem,
+    CheckinNoteResponse,
     CheckinResult,
     GrowthStateResponse,
     HabitCalendarResponse,
@@ -32,6 +34,7 @@ from app.schemas import (
     ThemeCard,
     ThemeDetail,
     TimelineItem,
+    UpdateCheckinNoteRequest,
     UserProfile,
 )
 from app.store import store
@@ -45,6 +48,8 @@ DbSession = Annotated[Session, Depends(get_db)]
 class UserProfileUpdateRequest(BaseModel):
     nickname: str | None = Field(default=None, max_length=64)
     avatar_url: str | None = None
+    bio: str | None = Field(default=None, max_length=200)
+    birthday: date | None = None
 
 
 @api_router.post("/auth/login", response_model=APIResponse[LoginData], tags=["认证"])
@@ -67,7 +72,9 @@ async def update_profile(
     payload: UserProfileUpdateRequest, user_id: CurrentUser, db: DbSession
 ) -> APIResponse[UserProfile]:
     return APIResponse(
-        data=store.update_user_profile(db, user_id, payload.nickname, payload.avatar_url)
+        data=store.update_user_profile(
+            db, user_id, payload.nickname, payload.avatar_url, payload.bio, payload.birthday
+        )
     )
 
 
@@ -155,6 +162,17 @@ async def list_checkins(
     user_id: CurrentUser, db: DbSession, habit_id: int | None = Query(default=None)
 ) -> APIResponse[list[CheckinItem]]:
     return APIResponse(data=store.list_checkins(db, user_id, habit_id))
+
+
+@api_router.patch(
+    "/checkins/{checkin_id}/note",
+    response_model=APIResponse[CheckinNoteResponse],
+    tags=["打卡"],
+)
+async def update_checkin_note(
+    checkin_id: int, payload: UpdateCheckinNoteRequest, user_id: CurrentUser, db: DbSession
+) -> APIResponse[CheckinNoteResponse]:
+    return APIResponse(data=store.update_checkin_note(db, user_id, checkin_id, payload))
 
 
 @api_router.post(
