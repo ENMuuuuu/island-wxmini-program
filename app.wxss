@@ -1,0 +1,32 @@
+/* Global design tokens */
+page {
+  --bg-primary: #060F1E;
+  --bg-secondary: #0A1A2E;
+  --bg-card: rgba(255, 255, 255, 0.06);
+  --bg-card-hover: rgba(255, 255, 255, 0.1);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.15);
+
+  --accent-teal: #3DD8C4;
+  --accent-teal-dim: rgba(61, 216, 196, 0.15);
+  --accent-gold: #F5C842;
+  --accent-gold-dim: rgba(245, 200, 66, 0.15);
+  --accent-coral: #FF7B5C;
+  --accent-coral-dim: rgba(255, 123, 92, 0.15);
+  --accent-green: #4CD97B;
+  --accent-purple: #9B8EFF;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.35);
+
+  --radius-sm: 12rpx;
+  --radius-md: 20rpx;
+  --radius-lg: 28rpx;
+  --radius-xl: 40rpx;
+  --radius-full: 9999rpx;
+
+  background-color: #060F1E;
+  color: #FFFFFF;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+}

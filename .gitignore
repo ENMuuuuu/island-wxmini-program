@@ -1,0 +1,55 @@
+# Windows
+
+[Dd]esktop.ini
+
+Thumbs.db
+
+$RECYCLE.BIN/
+
+ 
+
+# macOS
+
+.DS_Store
+
+.fseventsd
+
+.Spotlight-V100
+
+.TemporaryItems
+
+.Trashes
+
+ 
+
+# Node.js
+
+node_modules/
+
+ 
+
+# WeChat Mini Program — private local config (contains machine-specific paths/certs)
+
+project.private.config.json
+
+ 
+
+# Local tool configs (not part of the project)
+
+.claude/
+
+.superpowers/
+
+.cloudbase/
+
+ 
+
+# Logs
+
+*.log
+
+ 
+
+# Local dev preview file
+
+preview.html

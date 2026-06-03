@@ -1,0 +1,202 @@
+<view class="page">
+
+  <!-- Status bar spacer -->
+  <view style="height: {{statusBarHeight}}px;"></view>
+
+  <!-- Top nav -->
+  <view class="nav-bar">
+    <view class="nav-left">
+      <text class="nav-greeting">{{greeting}}，{{user.nickname || '岛主'}}</text>
+      <text class="nav-date">坚持是唯一的捷径</text>
+    </view>
+    <view class="nav-right">
+      <view class="streak-badge">
+        <text class="streak-fire">🔥</text>
+        <text class="streak-num">{{totalStreak}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Island Canvas -->
+  <view class="canvas-wrap">
+    <canvas
+      type="2d"
+      id="island-canvas"
+      style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;"
+      class="island-canvas"
+    ></canvas>
+
+    <!-- Floating stats -->
+    <view class="island-stats">
+      <text class="island-stat-text">{{completedCount}}/{{completedCount + pendingCount}} 已打卡</text>
+    </view>
+
+    <!-- Co-build partner badge on canvas -->
+    <view wx:if="{{cobuildActive && partnerInfo}}" class="partner-canvas-badge">
+      <text class="partner-badge-dot">●</text>
+      <text class="partner-badge-text">{{partnerInfo.nickname}} 共建中</text>
+    </view>
+  </view>
+
+  <!-- Habit section -->
+  <view class="habit-section">
+    <scroll-view class="habit-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+
+      <!-- Co-build partner status bar -->
+      <view wx:if="{{cobuildActive && partnerInfo}}" class="cobuild-bar">
+        <view class="cobuild-avatar">
+          <text class="cobuild-avatar-emoji">🧑</text>
+        </view>
+        <view class="cobuild-info">
+          <text class="cobuild-name">{{partnerInfo.nickname}}</text>
+          <text class="cobuild-status">今日已完成 {{partnerDone}}/{{partnerTotal}}</text>
+        </view>
+        <view class="cobuild-dots">
+          <view
+            wx:for="{{partnerHabits}}"
+            wx:key="id"
+            class="cobuild-dot {{item.today_record.status === 'completed' ? 'done' : ''}}"
+          ></view>
+        </view>
+        <view class="cobuild-tag">
+          <text class="cobuild-tag-text">共建</text>
+        </view>
+      </view>
+
+      <!-- Section header -->
+      <view class="section-header">
+        <text class="section-title">今日打卡</text>
+        <view class="section-tag">
+          <text class="section-tag-text">{{pendingCount}} 待完成</text>
+        </view>
+      </view>
+
+      <!-- Habit cards -->
+      <view wx:if="{{habits.length === 0}}" class="empty-state">
+        <text class="empty-emoji">🌱</text>
+        <text class="empty-title">岛屿等待第一粒种子</text>
+        <text class="empty-sub">添加一个习惯，开始让岛屿生长</text>
+      </view>
+      <view wx:for="{{habits}}" wx:key="id" class="habit-card-wrap">
+        <view
+          class="habit-card {{item.today_record.status === 'completed' ? 'done' : ''}} {{item.growth_state.dark_layer_count > 0 ? 'has-decay' : ''}}"
+          bindtap="onGoToDetail"
+          data-id="{{item.id}}"
+        >
+          <!-- Theme indicator -->
+          <view class="theme-dot {{item.theme_type}}"></view>
+
+          <!-- Habit info -->
+          <view class="habit-info">
+            <text class="habit-name">{{item.name}}</text>
+            <view class="habit-meta">
+              <text class="habit-streak">🔥 {{item.streak || 0}} 天</text>
+              <text class="habit-theme-label">{{item.theme_type === 'island' ? '🏝' : item.theme_type === 'building' ? '🏗' : '✨'}}</text>
+              <!-- Decay indicator chip -->
+              <view wx:if="{{item.growth_state.dark_layer_count > 0}}" class="decay-chip">
+                <text class="decay-chip-text">🔧 {{item.growth_state.dark_layer_count}} 待修</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- Charge button (only when not completed) -->
+          <view
+            wx:if="{{item.today_record.status !== 'completed'}}"
+            class="charge-btn {{item.isCharging ? 'charging' : ''}}"
+            catchtouchstart="onChargeTouchStart"
+            catchtouchend="onChargeTouchEnd"
+            catchtouchcancel="onChargeTouchEnd"
+            catchtap="onNoOp"
+            data-id="{{item.id}}"
+            data-index="{{index}}"
+          >
+            <view class="charge-ring-bg"></view>
+            <view
+              class="charge-ring-fill"
+              style="height: {{item.chargeProgress}}%;"
+            ></view>
+            <text class="charge-hint">{{item.isCharging ? '' : '长按'}}</text>
+          </view>
+
+          <!-- Done checkmark -->
+          <view wx:else class="done-badge">
+            <text class="done-check">✓</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- Add habit button -->
+      <view class="add-btn" bindtap="onGoToCreate">
+        <text class="add-icon">＋</text>
+        <text class="add-text">添加新习惯</text>
+      </view>
+
+      <!-- Bottom padding for tab bar -->
+      <view style="height: 120rpx;"></view>
+    </scroll-view>
+  </view>
+
+  <!-- Celebration overlay -->
+  <view class="celebrate-overlay {{showCelebrate ? 'show' : ''}}">
+    <view class="celebrate-content">
+      <view
+        wx:for="{{particles}}"
+        wx:key="id"
+        class="particle"
+        style="--angle: {{item.angle}}deg; background: {{item.color}};"
+      ></view>
+      <text class="celebrate-text">{{celebrateText}}</text>
+    </view>
+  </view>
+
+  <!-- 心得遮罩 -->
+  <view
+    class="note-mask {{showNoteSheet ? 'show' : ''}}"
+    bindtap="onNoteSkip"
+  ></view>
+
+  <!-- 心得底部弹窗 -->
+  <view class="note-sheet {{showNoteSheet ? 'show' : ''}}">
+    <view class="note-handle"></view>
+    <text class="note-title">记录今天的心得</text>
+    <text class="note-sub">点击其他区域可跳过</text>
+    <view class="note-input-wrap" catchtap="">
+      <textarea
+        class="note-input"
+        placeholder="今天感觉怎么样？有什么收获？"
+        placeholder-class="note-ph"
+        value="{{noteText}}"
+        bindinput="onNoteInput"
+        maxlength="200"
+        auto-height
+        focus="{{showNoteSheet}}"
+      ></textarea>
+      <text class="note-count">{{noteText.length}}/200</text>
+    </view>
+    <view class="note-actions">
+      <view class="note-skip-btn" catchtap="onNoteSkip">
+        <text class="note-skip-text">跳过</text>
+      </view>
+      <view
+        class="note-save-btn {{noteText.trim() ? '' : 'disabled'}}"
+        catchtap="onNoteSave"
+      >
+        <text class="note-save-text">保存心得 ✦</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 生日祝福弹窗 -->
+  <view class="bday-overlay {{showBirthdayWish ? 'show' : ''}}" bindtap="onCloseBirthdayWish">
+    <view class="bday-card" catchtap="">
+      <text class="bday-emoji">🎂</text>
+      <text class="bday-title">生日快乐！</text>
+      <text class="bday-sub">{{user.nickname || '岛主'}}，祝你今天幸福满满</text>
+      <text class="bday-wish">愿你的岛屿，和你的梦想一起生长 🏝</text>
+      <view class="bday-btn" bindtap="onCloseBirthdayWish">
+        <text class="bday-btn-text">谢谢 ✦</text>
+      </view>
+    </view>
+  </view>
+
+</view>

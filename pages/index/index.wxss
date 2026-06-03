@@ -1,0 +1,182 @@
+page {
+  height: 100%;
+  background: #060F1E;
+}
+
+.page {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- Star canvas ---- */
+.star-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ---- Splash ---- */
+.splash {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.splash.hidden {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+.splash-logo {
+  width: 160rpx;
+  height: 160rpx;
+  animation: splashFloat 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes splashFloat {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-16rpx); }
+}
+
+.splash-name {
+  margin-top: 32rpx;
+  font-size: 52rpx;
+  font-weight: 700;
+  letter-spacing: 8rpx;
+  color: #fff;
+}
+
+/* ---- Main content ---- */
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: opacity 0.5s ease;
+}
+
+.content.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---- Art area (upper half) ---- */
+.art-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(160deg, #0A1E3A 0%, #061428 50%, #030D1A 100%);
+}
+
+.art-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 480rpx;
+  height: 240rpx;
+  background: radial-gradient(ellipse, rgba(61,216,196,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.art-logo {
+  width: 360rpx;
+  height: 360rpx;
+  position: relative;
+  z-index: 1;
+  animation: logoFloat 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 60rpx rgba(61,216,196,0.5));
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 60rpx rgba(61,216,196,0.4)); }
+  50%       { transform: translateY(-24rpx); filter: drop-shadow(0 0 80rpx rgba(61,216,196,0.7)); }
+}
+
+/* ---- Bottom card ---- */
+.bottom-card {
+  flex-shrink: 0;
+  background: #0D1B2E;
+  border-top: 1rpx solid rgba(255,255,255,0.08);
+  border-top-left-radius: 56rpx;
+  border-top-right-radius: 56rpx;
+  padding: 56rpx 60rpx 80rpx;
+  backdrop-filter: blur(20px);
+}
+
+.title {
+  display: block;
+  font-size: 72rpx;
+  font-weight: 800;
+  letter-spacing: 12rpx;
+  color: #fff;
+  margin-bottom: 20rpx;
+}
+
+.slogan {
+  display: block;
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.38);
+  line-height: 1.8;
+  margin-bottom: 56rpx;
+  white-space: pre-line;
+}
+
+/* ---- Actions ---- */
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28rpx;
+}
+
+.btn-login {
+  width: 100%;
+  height: 108rpx;
+  border-radius: 9999rpx;
+  background: linear-gradient(135deg, #3DD8C4, #2ABCA8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 60rpx rgba(61,216,196,0.4), 0 12rpx 40rpx rgba(0,0,0,0.4);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-login:active {
+  transform: scale(0.96);
+  box-shadow: 0 0 30rpx rgba(61,216,196,0.2);
+}
+
+.btn-login.loading {
+  background: rgba(61,216,196,0.4);
+  box-shadow: none;
+}
+
+.btn-text {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #060F1E;
+  letter-spacing: 2rpx;
+}
+
+.btn-login.loading .btn-text {
+  color: rgba(255,255,255,0.6);
+}
+
+.disclaimer {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.18);
+  letter-spacing: 1rpx;
+}

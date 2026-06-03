@@ -1,0 +1,43 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/home/home",
+    "pages/habit/create/index",
+    "pages/habit/detail/index",
+    "pages/profile/index",
+    "pages/profile/edit/index"
+  ],
+  "tabBar": {
+    "custom": true,
+    "color": "#5B7FA6",
+    "selectedColor": "#3DD8C4",
+    "backgroundColor": "#070F1C",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "岛屿",
+        "iconPath": "images/tab/tab_normal.png",
+        "selectedIconPath": "images/tab/tab_selected.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "images/tab/tab_normal.png",
+        "selectedIconPath": "images/tab/tab_selected.png"
+      }
+    ]
+  },
+  "window": {
+    "navigationBarBackgroundColor": "#060F1E",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "不荒岛",
+    "backgroundColorTop": "#060F1E",
+    "backgroundColor": "#060F1E",
+    "backgroundColorBottom": "#060F1E"
+  },
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

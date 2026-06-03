@@ -1,0 +1,35 @@
+<view class="page">
+
+  <!-- 粒子 canvas (背景层) -->
+  <canvas type="2d" id="star-canvas" class="star-canvas"></canvas>
+
+  <!-- Splash -->
+  <view class="splash {{showSplash ? '' : 'hidden'}}">
+    <image class="splash-logo" src="/images/logo.png" mode="aspectFit"></image>
+    <text class="splash-name">不荒岛</text>
+  </view>
+
+  <!-- Main content -->
+  <view class="content {{showSplash ? 'hidden' : ''}}">
+
+    <!-- 上半：岛屿大图区 -->
+    <view class="art-area">
+      <view class="art-glow"></view>
+      <image class="art-logo" src="/images/logo.png" mode="aspectFit"></image>
+    </view>
+
+    <!-- 下半：毛玻璃底卡 -->
+    <view class="bottom-card">
+      <text class="title">不荒岛</text>
+      <text class="slogan">每一次打卡，岛屿就生长一层{{'\n'}}聚沙成塔，看见时间的形状</text>
+
+      <view class="actions">
+        <view class="btn-login {{loading ? 'loading' : ''}}" bindtap="handleLogin">
+          <text class="btn-text">{{loading ? '正在登岛…' : '微信一键登岛'}}</text>
+        </view>
+        <text class="disclaimer">登录即同意使用条款与隐私政策</text>
+      </view>
+    </view>
+
+  </view>
+</view>

@@ -1,0 +1,86 @@
+<view class="page">
+  <view style="height: {{statusBarHeight}}px;"></view>
+
+  <!-- Nav -->
+  <view class="nav">
+    <view class="nav-back" bindtap="onBack">
+      <text class="nav-back-icon">←</text>
+    </view>
+    <text class="nav-title">编辑资料</text>
+    <view class="nav-save {{saving ? 'loading' : ''}}" bindtap="onSave">
+      <text class="nav-save-text">{{saving ? '保存中' : '保存'}}</text>
+    </view>
+  </view>
+
+  <!-- Avatar -->
+  <view class="avatar-section" bindtap="onChooseAvatar">
+    <view class="avatar-wrap">
+      <image wx:if="{{avatarUrl}}" class="avatar-img" src="{{avatarUrl}}" mode="aspectFill"></image>
+      <view wx:else class="avatar-placeholder">
+        <text class="avatar-emoji">🏝</text>
+      </view>
+      <view class="avatar-edit-badge">
+        <text class="avatar-edit-icon">✎</text>
+      </view>
+    </view>
+    <text class="avatar-hint">点击更换头像</text>
+  </view>
+
+  <!-- Fields -->
+  <view class="fields">
+    <view class="field-item">
+      <text class="field-label">昵称</text>
+      <input
+        class="field-input"
+        value="{{nickname}}"
+        bindinput="onNicknameInput"
+        placeholder="输入你的昵称"
+        placeholder-class="field-ph"
+        maxlength="20"
+      />
+    </view>
+
+    <view class="field-divider"></view>
+
+    <view class="field-item">
+      <text class="field-label">个性签名</text>
+      <input
+        class="field-input"
+        value="{{bio}}"
+        bindinput="onBioInput"
+        placeholder="一句话介绍自己"
+        placeholder-class="field-ph"
+        maxlength="50"
+      />
+    </view>
+
+    <view class="field-divider"></view>
+
+    <view class="field-item" bindtap="onPickBirthday">
+      <text class="field-label">生日</text>
+      <view class="field-picker-row">
+        <text class="field-picker-val {{birthday ? '' : 'empty'}}">
+          {{birthday || '选择生日'}}
+        </text>
+        <text class="field-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Birthday picker (hidden trigger) -->
+  <view wx:if="{{showBirthdayPicker}}" class="birthday-picker-wrap" catchtap="">
+    <picker
+      mode="date"
+      value="{{birthday || '2000-01-01'}}"
+      start="1900-01-01"
+      end="{{todayStr}}"
+      bindchange="onBirthdayChange"
+      bindcancel="onBirthdayCancel"
+    >
+      <view class="birthday-picker-trigger" bindtap="onBirthdayPickerTap">
+        <text>{{birthday || '选择日期'}}</text>
+      </view>
+    </picker>
+  </view>
+
+</view>

@@ -1,0 +1,135 @@
+<view class="page">
+
+  <view style="height: {{statusBarHeight}}px;"></view>
+
+  <!-- Nav -->
+  <view class="nav">
+    <view class="nav-back" bindtap="onNavBack">
+      <text class="nav-back-icon">←</text>
+    </view>
+    <text class="nav-title">{{step === 1 ? '新建习惯' : '选择主题'}}</text>
+    <view class="nav-step">
+      <text class="nav-step-text">{{step}}/2</text>
+    </view>
+  </view>
+
+  <!-- Step 1: Basic info -->
+  <view class="step-container {{step === 1 ? 'active' : 'hidden'}}">
+    <scroll-view scroll-y class="step-scroll">
+
+      <view class="field-group">
+        <text class="field-label">习惯名称</text>
+        <input
+          class="field-input"
+          placeholder="例如：每天阅读30分钟"
+          placeholder-class="ph"
+          value="{{name}}"
+          bindinput="onNameInput"
+          maxlength="20"
+        />
+        <text class="field-count">{{name.length}}/20</text>
+      </view>
+
+      <view class="field-group">
+        <text class="field-label">备注（选填）</text>
+        <textarea
+          class="field-textarea"
+          placeholder="记录一下你的动力来源…"
+          placeholder-class="ph"
+          value="{{description}}"
+          bindinput="onDescInput"
+          maxlength="100"
+          auto-height
+        ></textarea>
+      </view>
+
+      <view class="field-group">
+        <text class="field-label">分类</text>
+        <view class="category-grid">
+          <view
+            wx:for="{{categories}}"
+            wx:key="id"
+            class="category-item {{selectedCategoryIdx === index ? 'selected' : ''}}"
+            data-index="{{index}}"
+            bindtap="onSelectCategory"
+          >
+            <text class="cat-emoji">{{item.emoji}}</text>
+            <text class="cat-name">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="field-group">
+        <text class="field-label">提醒时间</text>
+        <picker mode="time" value="{{remindTime}}" bindchange="onTimeChange">
+          <view class="picker-display">
+            <text class="picker-value">⏰  {{remindTime}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view style="height: 160rpx;"></view>
+    </scroll-view>
+
+    <!-- Step 1 CTA -->
+    <view class="bottom-cta">
+      <view
+        class="btn-primary {{name.trim() ? '' : 'disabled'}}"
+        bindtap="onNextStep"
+      >
+        <text class="btn-text">下一步：选择主题</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Step 2: Theme selection -->
+  <view class="step-container {{step === 2 ? 'active' : 'hidden'}}">
+    <scroll-view scroll-y class="step-scroll">
+
+      <text class="theme-intro">主题决定了你的岛屿如何生长</text>
+
+      <view
+        wx:for="{{themes}}"
+        wx:key="id"
+        class="theme-card {{selectedThemeIdx === index ? 'selected' : ''}} theme-{{item.type}}"
+        data-index="{{index}}"
+        bindtap="onSelectTheme"
+      >
+        <view class="theme-card-left">
+          <text class="theme-emoji">{{item.emoji}}</text>
+        </view>
+        <view class="theme-card-body">
+          <text class="theme-name">{{item.name}}</text>
+          <text class="theme-desc">{{item.desc}}</text>
+        </view>
+        <view class="theme-check {{selectedThemeIdx === index ? 'show' : ''}}">✓</view>
+      </view>
+
+      <!-- Preview -->
+      <view class="theme-preview">
+        <text class="preview-label">当前选择</text>
+        <view class="preview-card theme-{{themes[selectedThemeIdx].type}}">
+          <text class="preview-emoji">{{themes[selectedThemeIdx].emoji}}</text>
+          <view class="preview-info">
+            <text class="preview-name">{{themes[selectedThemeIdx].name}}</text>
+            <text class="preview-desc">每次打卡，{{themes[selectedThemeIdx].desc}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view style="height: 160rpx;"></view>
+    </scroll-view>
+
+    <!-- Step 2 CTA -->
+    <view class="bottom-cta">
+      <view
+        class="btn-primary {{submitting ? 'loading' : ''}}"
+        bindtap="onSubmit"
+      >
+        <text class="btn-text">{{submitting ? '创建中…' : '创建我的习惯 ✦'}}</text>
+      </view>
+    </view>
+  </view>
+
+</view>

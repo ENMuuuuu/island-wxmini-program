@@ -1,0 +1,174 @@
+<view class="page">
+
+  <!-- Status bar spacer -->
+  <view style="height: {{statusBarHeight}}px;"></view>
+
+  <!-- Loading -->
+  <view class="loading" wx:if="{{loading}}">
+    <text class="loading-text">加载中…</text>
+  </view>
+
+  <scroll-view wx:else scroll-y class="scroll">
+
+    <!-- Header -->
+    <view class="profile-header" bindtap="onGoToEdit">
+      <view class="avatar-wrap">
+        <view class="avatar">
+          <image wx:if="{{user.avatar_url}}" class="avatar-img-real" src="{{user.avatar_url}}" mode="aspectFill"></image>
+          <text wx:else class="avatar-emoji">🏝</text>
+        </view>
+        <view class="avatar-edit-dot"></view>
+      </view>
+      <view class="user-info">
+        <text class="user-name">{{user.nickname || '岛主'}}</text>
+        <text wx:if="{{user.bio}}" class="user-bio">{{user.bio}}</text>
+        <text class="user-since">加入不荒岛 · 坚持中</text>
+      </view>
+      <text class="profile-edit-arrow">›</text>
+    </view>
+
+    <!-- Stats overview -->
+    <view class="stats-grid">
+      <view class="stats-card">
+        <text class="stats-num">{{totalCheckins}}</text>
+        <text class="stats-label">累计打卡</text>
+      </view>
+      <view class="stats-divider"></view>
+      <view class="stats-card">
+        <text class="stats-num">{{longestStreak}}</text>
+        <text class="stats-label">最长连击</text>
+      </view>
+      <view class="stats-divider"></view>
+      <view class="stats-card">
+        <text class="stats-num">{{activeCount}}</text>
+        <text class="stats-label">进行中</text>
+      </view>
+    </view>
+
+    <!-- Co-build section -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">共建模式</text>
+      </view>
+
+      <!-- Active co-build: show partner card -->
+      <view wx:if="{{cobuildActive && cobuildPartner}}" class="cobuild-active-card">
+        <view class="cobuild-active-left">
+          <view class="cobuild-partner-avatar">
+            <text class="cobuild-partner-emoji">🧑</text>
+          </view>
+          <view class="cobuild-partner-info">
+            <text class="cobuild-partner-name">{{cobuildPartner.nickname}}</text>
+            <text class="cobuild-partner-sub">正在共同守护这片土地</text>
+          </view>
+        </view>
+        <view class="cobuild-leave-btn" bindtap="onLeaveCobuild">
+          <text class="cobuild-leave-text">离开</text>
+        </view>
+      </view>
+
+      <!-- My invite code (always shown) -->
+      <view class="cobuild-invite-row">
+        <view class="cobuild-invite-left">
+          <text class="cobuild-invite-label">我的邀请码</text>
+          <text class="cobuild-invite-code">{{myInviteCode}}</text>
+        </view>
+        <view class="cobuild-copy-btn" bindtap="onCopyInviteCode">
+          <text class="cobuild-copy-text">复制</text>
+        </view>
+      </view>
+
+      <!-- Join button (only when not in co-build) -->
+      <view wx:if="{{!cobuildActive}}" class="cobuild-join-btn" bindtap="onShowInviteSheet">
+        <text class="cobuild-join-icon">✦</text>
+        <text class="cobuild-join-text">输入邀请码，与好友共建</text>
+        <text class="cobuild-join-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- Habit list section -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">我的习惯</text>
+        <view class="section-action" bindtap="onGoToCreate">
+          <text class="section-action-text">＋ 添加</text>
+        </view>
+      </view>
+
+      <view wx:if="{{habits.length === 0}}" class="empty-tip">
+        <text class="empty-emoji">🌱</text>
+        <text class="empty-text">还没有习惯，点击添加开始</text>
+      </view>
+
+      <view
+        wx:for="{{habits}}"
+        wx:key="id"
+        class="habit-row"
+        bindtap="onGoToDetail"
+        data-id="{{item.id}}"
+      >
+        <view class="habit-row-left">
+          <view class="theme-bar {{item.theme_type}}"></view>
+          <view class="habit-row-info">
+            <text class="habit-row-name">{{item.name}}</text>
+            <view class="habit-row-meta">
+              <text class="habit-row-streak">🔥 {{item.streak || 0}} 天</text>
+              <text class="habit-row-status {{item.habit_status}}">
+                {{item.habit_status === 'active' ? '进行中' : item.habit_status === 'paused' ? '已暂停' : '已归档'}}
+              </text>
+              <text wx:if="{{item.growth_state.dark_layer_count > 0}}" class="habit-row-decay">
+                🔧 {{item.growth_state.dark_layer_count}}
+              </text>
+            </view>
+          </view>
+        </view>
+        <view class="habit-row-right">
+          <text class="habit-row-layers">{{item.growth_state.lit_layer_count || 0}}层</text>
+          <text class="habit-row-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Settings section -->
+    <view class="section">
+      <view class="settings-list">
+        <view class="settings-item" bindtap="onLogout">
+          <text class="settings-icon">🚪</text>
+          <text class="settings-label">退出登录</text>
+          <text class="settings-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="footer-text">
+      <text>不荒岛 · 聚沙成塔</text>
+    </view>
+
+    <view style="height: 140rpx;"></view>
+  </scroll-view>
+
+  <!-- Invite code input sheet -->
+  <view class="sheet-mask {{showInviteSheet ? 'show' : ''}}" bindtap="onCloseInviteSheet"></view>
+  <view class="invite-sheet {{showInviteSheet ? 'show' : ''}}">
+    <view class="sheet-handle"></view>
+    <text class="sheet-title">与好友共建一座岛</text>
+    <text class="sheet-desc">输入好友的邀请码，共同守护这片土地</text>
+    <view class="sheet-input-wrap">
+      <input
+        class="sheet-input"
+        placeholder="例如：ISLAND-2024"
+        placeholder-class="sheet-ph"
+        value="{{inviteCode}}"
+        bindinput="onInviteCodeInput"
+        maxlength="20"
+      />
+    </view>
+    <view
+      class="sheet-confirm-btn {{inviteCode.trim() ? '' : 'disabled'}} {{cobuildLoading ? 'loading' : ''}}"
+      bindtap="onJoinCobuild"
+    >
+      <text class="sheet-confirm-text">{{cobuildLoading ? '加入中…' : '加入共建 ✦'}}</text>
+    </view>
+  </view>
+
+</view>

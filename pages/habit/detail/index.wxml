@@ -1,0 +1,124 @@
+<view class="page">
+
+  <!-- Nav -->
+  <view class="nav">
+    <view class="nav-back" bindtap="onBack">
+      <text class="nav-back-icon">←</text>
+    </view>
+    <text class="nav-title">{{habit.name || '加载中…'}}</text>
+    <view class="nav-action" bindtap="onPauseHabit">
+      <text class="nav-action-text">{{habit.habit_status === 'paused' ? '恢复' : '…'}}</text>
+    </view>
+  </view>
+
+  <!-- Loading -->
+  <view class="loading" wx:if="{{loading}}">
+    <text class="loading-text">🏝 加载中…</text>
+  </view>
+
+  <block wx:else>
+
+      <view class="stats-row">
+        <view class="stat-card">
+          <text class="stat-num">{{habit.growth_state.lit_layer_count || 0}}</text>
+          <text class="stat-label">累计打卡</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-num">{{habit.current_layer_count || 0}}</text>
+          <text class="stat-label">已成长层</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-num">{{habit.growth_state.progress_percent || 0}}%</text>
+          <text class="stat-label">成长进度</text>
+        </view>
+      </view>
+
+    <!-- Progress bar -->
+    <view class="progress-wrap">
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{habit.growth_state.progress_percent || 0}}%;"></view>
+      </view>
+      <text class="progress-text">{{habit.growth_state.lit_layer_count || 0}} / {{habit.growth_state.current_layer_count || habit.current_layer_count || 50}} 层</text>
+    </view>
+
+    <!-- Decay alert banner (shown when dark_layer_count > 0) -->
+    <view wx:if="{{habit.growth_state.dark_layer_count > 0}}" class="decay-banner">
+      <view class="decay-banner-body">
+        <text class="decay-banner-icon">🔧</text>
+        <view class="decay-banner-text">
+          <text class="decay-banner-title">{{habit.growth_state.dark_layer_count}} 块正在衰退</text>
+          <text class="decay-banner-sub">中断了打卡？用一次补救来治愈它</text>
+        </view>
+      </view>
+      <view
+        class="decay-repair-btn {{repairing ? 'loading' : ''}}"
+        bindtap="onRepairLayer"
+      >
+        <text class="decay-repair-text">{{repairing ? '治愈中…' : '✦ 治愈'}}</text>
+      </view>
+    </view>
+
+    <!-- Tab switcher -->
+    <view class="tabs">
+      <view
+        class="tab-item {{activeTab === 'island' ? 'active' : ''}}"
+        data-tab="island"
+        bindtap="onSwitchTab"
+      >🏝 成长岛屿</view>
+      <view
+        class="tab-item {{activeTab === 'calendar' ? 'active' : ''}}"
+        data-tab="calendar"
+        bindtap="onSwitchTab"
+      >📅 打卡日历</view>
+    </view>
+
+    <!-- Island view -->
+    <view class="tab-content {{activeTab === 'island' ? 'show' : ''}}">
+      <canvas
+        type="2d"
+        id="detail-canvas"
+        style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;"
+        class="detail-canvas"
+      ></canvas>
+      <view class="layer-info">
+        <text class="layer-info-text">
+          {{habit.theme_type === 'island' ? '🌿' : habit.theme_type === 'building' ? '🏗' : '✨'}}
+          {{habit.growth_state.lit_layer_count || 0}} 层已点亮
+          <text wx:if="{{habit.growth_state.dark_layer_count > 0}}" class="dark-layer-hint"> · {{habit.growth_state.dark_layer_count}} 块待修复</text>
+        </text>
+      </view>
+    </view>
+
+    <!-- Calendar view -->
+    <view class="tab-content {{activeTab === 'calendar' ? 'show' : ''}}">
+      <view class="calendar">
+        <!-- Calendar header -->
+        <view class="cal-header">
+          <view class="cal-arrow" data-dir="{{-1}}" bindtap="onChangeCalendarMonth">‹</view>
+          <text class="cal-title">{{calendarYear}} 年 {{calendarMonth}} 月</text>
+          <view class="cal-arrow" data-dir="{{1}}" bindtap="onChangeCalendarMonth">›</view>
+        </view>
+
+        <!-- Weekday labels -->
+        <view class="cal-weekdays">
+          <text wx:for="{{weekdays}}" wx:key="*this" class="cal-wd">{{item}}</text>
+        </view>
+
+        <!-- Day grid -->
+        <view class="cal-grid">
+          <view
+            wx:for="{{calendarDays}}"
+            wx:key="index"
+            class="cal-day {{item.empty ? 'empty' : ''}} {{item.status === 'completed' ? 'done' : ''}} {{item.status === 'missed' ? 'missed' : ''}} {{item.status === 'pending' ? 'today' : ''}}"
+          >
+            <text wx:if="{{!item.empty}}" class="cal-day-num">{{item.day}}</text>
+            <view wx:if="{{item.status === 'completed' && !item.empty}}" class="cal-dot"></view>
+          </view>
+        </view>
+
+      </view>
+    </view>
+
+  </block>
+
+</view>
